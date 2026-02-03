@@ -1,0 +1,132 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model TemplateDetails;
+@{
+}
+<!-- Employment Information -->
+<form id="employment_form" asp-controller="Home" asp-action="LoadLoanInfo" novalidate>
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.FirstName)
+    @Html.HiddenFor(model => model.LastName)
+    @Html.HiddenFor(model => model.EmailAddress)
+    @Html.HiddenFor(model => model.DOB)
+    @Html.HiddenFor(model => model.SSN)
+    @Html.HiddenFor(model => model.LoanAmount)
+    @Html.HiddenFor(model => model.SelectedPurpose)
+    @Html.HiddenFor(model => model.PropertyAddr)
+    @Html.HiddenFor(model => model.EstimatedValue)
+    @Html.HiddenFor(model => model.PhoneNumber)
+<div id="form-2" data-step="2">
+    <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="employer" class="form-label">Employer name</label>
+                <input type="text" class="form-control" placeholder="Enter your employer's name" asp-for="@Model.EmployerName">
+                <span class="text-danger field-validation" data-val-for="EmployerName"></span>
+            </div>
+        <div class="col-md-6">
+            <label for="job-title" class="form-label">Job title</label>
+            <input type="text" class="form-control" id="job-title" placeholder="Enter your job title" asp-for="@Model.JobTitle">
+            <span class="text-danger field-validation" data-val-for="JobTitle"></span>
+        </div>     
+    </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="years-at-job" class="form-label">Years at current job</label>
+                <input type="number" class="form-control" placeholder="Enter your years at current job" asp-for="@Model.Years">
+                <span class="text-danger field-validation" data-val-for="Years"></span>
+            </div>
+            <div class="col-md-6">
+                <label for="annual-income" class="form-label">Annual income</label>
+                <input type="number" required class="form-control" placeholder="Enter your annual income" asp-for="@Model.AnnualIncome">
+                <span class="text-danger field-validation" data-val-for="AnnualIncome"></span>
+            </div>
+        </div>
+</div>
+    <div class="d-flex justify-content-between">      
+        <button type="button" id="prev_btn" class="prev-btns">← Back</button>
+        <button class="nav-btns">Next →</button>
+    </div>
+</form>
+<script>
+$(document).ready(function () {
+        document.getElementById("stepper").querySelector(".stepper-progressbar-value").setAttribute("style", "--progress-value: 50%;--duration: 1000ms;--delay: 0ms;");
+    removeCurrentStepTickMark();
+        addTickMark();
+        // Intercept the form submission
+        $('#employment_form').submit(function (event) {
+            event.preventDefault();
+            // clear previous validation messages
+            $('.field-validation').text('');
+            if (!validateEmploymentForm()) {
+                return false;
+            }
+            $.ajax({
+                url: '@Url.Action("LoadLoanInfo")', // URL to post the form data
+                type: 'POST',
+                data: $(this).serialize(), // Serialize the form data
+                success: function (result) {
+                    debugger;
+                    // Render the partial view result in the specified div
+                    $('#info_container').html(result);
+                }
+            });
+        });
+        // Clear validation while typing
+        $('#employment_form').on('input change', 'input, select, textarea', function () {
+            var name = $(this).attr('name');
+            if (!name) return;
+            var val = $(this).val();
+            if (val && !(typeof val === 'string' && val.trim() === '')) {
+                $('.field-validation[data-val-for="' + name + '"]').text('');
+            }
+        });
+        $('#prev_btn').click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '@Url.Action("LoadPersonalInfo")', // URL to post the form data
+                type: 'POST',
+                data: $("#employment_form").serialize(), // Serialize the form data
+                success: function (result) {
+                    debugger;
+                    // Render the partial view result in the specified div
+                    $('#info_container').html(result);
+                }
+            });
+        });
+        document.getElementById("step-2").checked = true;
+        $(".step-labels").find(".active").removeClass("active");
+        $(document.getElementById("step-2-label")).addClass("active");
+        
+    });
+    function addTickMark() {
+        var span = document.getElementById("step-1-label").querySelector(".checkmark");
+        if (span) {
+            debugger;
+            span.classList.remove("checkmark");
+            span.classList.add("tick");
+            span.innerHTML = "&#10003;";
+        }
+    }
+    function removeCurrentStepTickMark() {
+            var span = document.getElementById("step-2-label").querySelector(".tick");
+            if (span) {
+                span.classList.remove("tick");
+                span.classList.add("checkmark");
+                span.innerHTML = "";
+            }
+    }
+    function validateEmploymentForm() {
+        var isValid = true;
+        var fields = ['EmployerName', 'JobTitle', 'Years', 'AnnualIncome'];
+        fields.forEach(function (name) {
+            var el = $('[name="' + name + '"]');
+            var val = el.val();
+            if (!val || (typeof val === 'string' && val.trim() === '')) {
+                $('.field-validation[data-val-for="' + name + '"]').text('This field cannot be empty.');
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+</script>

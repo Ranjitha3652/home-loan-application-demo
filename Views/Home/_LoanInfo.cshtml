@@ -1,0 +1,113 @@
+﻿@model TemplateDetails;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<form id="loan_form" method="post" asp-controller="Home" asp-action="SignDocument" novalidate>
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.FirstName)
+    @Html.HiddenFor(model => model.LastName)
+    @Html.HiddenFor(model => model.EmailAddress)
+    @Html.HiddenFor(model => model.DOB)
+    @Html.HiddenFor(model => model.SSN)
+    @Html.HiddenFor(model => model.PhoneNumber)
+    @Html.HiddenFor(Model => Model.EmployerName)
+    @Html.HiddenFor(model => model.JobTitle)
+    @Html.HiddenFor(model => model.Years)
+    @Html.HiddenFor(model => model.AnnualIncome)
+    <div id="form-3" data-step="3">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="loanAmt" class="form-label">Loan Amount Requested</label>
+                <input type="number" class="form-control" placeholder="Enter your loan amount requested" asp-for="@Model.LoanAmount">
+                <span class="text-danger field-validation" data-val-for="LoanAmount"></span>
+            </div>
+            <div class="col-md-6">
+                <label for="loanPurpose" class="form-label">Purpose of Loan</label>
+                <select class="form-select" id="loanPurpose" required aria-label="Select purpose of loan" asp-for="@Model.SelectedPurpose" asp-items="@Model.LoanOptions">
+                <span class="text-danger field-validation" data-val-for="SelectedPurpose"></span>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="address" class="form-label">Property Address</label>
+                <input type="text" required min-length="4" class="form-control" placeholder="Enter your property address" asp-for="@Model.PropertyAddr">
+                <span class="text-danger field-validation" data-val-for="PropertyAddr"></span>
+            </div>
+            <div class="col-md-6">
+                <label for="annual-income" class="form-label">Estimated Property value</label>
+                <input type="number" required class="form-control" placeholder="Enter your annual income" asp-for="@Model.EstimatedValue">
+                <span class="text-danger field-validation" data-val-for="EstimatedValue"></span>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between">
+        <button type="button" id="prev_btn" class="prev-btns">← Back</button>
+        <button class="Submit-btn">Submit</button>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        document.getElementById("stepper").querySelector(".stepper-progressbar-value").setAttribute("style", "--progress-value: 100%;--duration: 1000ms;--delay: 0ms;");
+        addTickMark();
+        // Clear previous validation messages on input/change
+        $('#loan_form').on('input change', 'input, select, textarea', function () {
+            var name = $(this).attr('name');
+            if (!name) return;
+            var val = $(this).val();
+            if (val && !(typeof val === 'string' && val.trim() === '')) {
+                $('.field-validation[data-val-for="' + name + '"]').text('');
+            }
+        });
+
+        // Intercept submit to validate required fields
+        $('#loan_form').submit(function (e) {
+            e.preventDefault();
+            $('.field-validation').text('');
+            if (!validateLoanForm()) {
+                return false;
+            }
+            // submit the form (bypass handler recursion)
+            e.currentTarget.submit();
+        });
+        $('#prev_btn').click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '@Url.Action("LoadEmploymentInfo")', // URL to post the form data
+                type: 'POST',
+                data: $("#loan_form").serialize(), // Serialize the form data
+                success: function (result) {
+                    // Render the partial view result in the specified div
+                    $('#info_container').html(result);
+                }
+            });
+        });
+        document.getElementById("step-3").checked = true;
+        $(".step-labels").find(".active").removeClass("active");
+        $(document.getElementById("step-3-label")).addClass("active");
+    });
+    function addTickMark() {
+        var span = document.getElementById("step-2-label").querySelector(".checkmark");
+        if (span) {
+            span.classList.remove("checkmark");
+            span.classList.add("tick");
+            span.innerHTML = "&#10003;";
+        }
+    }
+
+    function validateLoanForm() {
+        var isValid = true;
+        var fields = ['LoanAmount', 'SelectedPurpose', 'PropertyAddr', 'EstimatedValue'];
+        fields.forEach(function (name) {
+            var el = $('[name="' + name + '"]');
+            var val = el.val();
+            if (!val || (typeof val === 'string' && val.trim() === '')) {
+                $('.field-validation[data-val-for="' + name + '"]').text('This field cannot be empty.');
+                isValid = false;
+            }
+        });
+        return isValid;
+    }
+</script>

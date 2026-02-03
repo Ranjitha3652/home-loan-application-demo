@@ -1,0 +1,57 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@page "/Home/SignCompleted"
+@model TemplateDetails
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Thank You";
+}
+<script>
+$(window).on("load", function (e){
+    if(window.location.search !=null){
+        // Get the document ID from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const documentId = urlParams.get('documentId');
+        let anchor = document.getElementById("downloadBtn");
+        anchor.href = anchor.href.replace("asp-route-id-value", documentId);
+        // Poll the getStatus endpoint every 2 seconds
+        const pollIntervalMs = 2000;
+        let pollTimeoutId;        
+        function pollStatus() {
+          fetch(`/home/getStatus/${documentId}`)
+            .then(data => {
+              if (data.status === 200) {                  
+                // Update the text of the download button
+                document.getElementById('download-text').textContent = "Download"; 
+                document.getElementById('downloadBtn').classList.remove("change");
+                // Stop polling
+                clearTimeout(pollTimeoutId);
+              } else {
+                // Continue polling
+                pollTimeoutId = setTimeout(pollStatus, pollIntervalMs);
+              }
+            })
+            .catch(error =>  {debugger; console.error(error)});
+        }
+        
+        // Start polling
+        pollTimeoutId = setTimeout(pollStatus, pollIntervalMs);
+    }
+});
+</script>
+
+<div class="container submit-wrapper">
+            <img alt="Submit Logo" class="success-img" style="width:100px" src="~/assets/images/submit-logo.png" />
+            <h1>Loan form submitted successfully!</h1>
+            <div class="align-center res-text">
+            <p>Thank you for submitting your loan application. Our team is currently reviewing the information provided to ensure all necessary details are accurate and complete. </p>
+            <p>You can download the signed document for your records in the meantime.</p>
+            </div>
+            <div>
+        <a class="Submit-btn change" id="downloadBtn" asp-route-id="asp-route-id-value" asp-controller="Home" asp-action="DownloadDocument"><img src="~/assets/images/DownloadIcon.png" alt="download icon" class="icon"></img><span id="download-text">Download document</span></a>
+    </div>
+            <div><a id="homeBtn" href="/">Back to home</a></div>
+           
+    </div>
+</div>
