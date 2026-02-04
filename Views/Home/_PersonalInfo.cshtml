@@ -1,0 +1,135 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model TemplateDetails
+@{
+}
+@* @(Model.DOB == DateTime.MinValue ? "" : Model.DOB.ToString("MM/dd/yyyy") *@
+<form id="personal_form" asp-action="LoadEmploymentInfo" asp-controller="Home" novalidate>
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.EmployerName)
+    @Html.HiddenFor(model => model.JobTitle)
+    @Html.HiddenFor(model => model.Years)
+    @Html.HiddenFor(model => model.AnnualIncome)
+    @Html.HiddenFor(Model => Model.LoanAmount)
+    @Html.HiddenFor(model => model.LoanOptions)
+    @Html.HiddenFor(model => model.PropertyAddr)
+    @Html.HiddenFor(model => model.EstimatedValue)
+            <!-- Personal Information -->
+            <div id="form-1" data-step="1">
+                <div class="row mb-3">
+                    <div class="col-md-6 ">
+                        <label for="first-name" class="form-label">First name</label>
+                            <input type="text" required class="form-control" id="first-name" placeholder="Enter your first name" asp-for="@Model.FirstName">
+                            <span class="text-danger field-validation" data-val-for="FirstName"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="last-name" class="form-label">Last name</label>
+                        <input type="text" required class="form-control" id="last-name" placeholder="Enter your last name" asp-for="@Model.LastName">
+                        <span class="text-danger field-validation" data-val-for="LastName"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="dob" class="form-label">Date of birth</label>
+                        <input type="date" min="01/01/1900" required class="form-control" id="dob" asp-for="@Model.DOB" value="@(Model.DOB == DateTime.MinValue ? "" : Model.DOB.ToString("yyyy-MM-dd"))">
+                        <span class="text-danger field-validation" data-val-for="DOB"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ssn" class="form-label">Social security number</label>
+                        <input type="number" required class="form-control" id="ssn" placeholder="Enter your social security number" asp-for="@Model.SSN">
+                        <span class="text-danger field-validation" data-val-for="SSN"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone number</label>
+                        <input type="number" required class="form-control" id="phone" placeholder="Enter your phone number" asp-for="@Model.PhoneNumber">
+                        <span class="text-danger field-validation" data-val-for="PhoneNumber"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" required class="form-control" id="email" placeholder="Enter your email address" asp-for="@Model.EmailAddress">
+                        <span class="text-danger field-validation" data-val-for="EmailAddress"></span>
+                    </div>
+                </div>
+            </div>
+    <div class="d-flex justify-content-end">
+        <button id="btnSubmit" class="nav-btns">Next →</button>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        document.getElementById("stepper").querySelector(".stepper-progressbar-value").setAttribute("style", "--progress-value: 0%;--duration: 1000ms;--delay: 0ms;");
+        removeTickMark();
+        // Intercept the form submission
+        $('#personal_form').submit(function (event) {
+            event.preventDefault();
+            // clear previous validation messages
+            $('.field-validation').text('');
+
+            if (!validatePersonalForm()) {
+                return false;
+            }
+
+            $.ajax({
+                url: '@Url.Action("LoadEmploymentInfo")', // URL to post the form data
+                type: 'POST',
+                data: $(this).serialize(), // Serialize the form data
+                success: function (result) {
+                    // Render the partial view result in the specified div
+                    $('#info_container').html(result);
+                }
+            });
+        });
+        // Clear validation messages as the user types or changes a value
+        $('#personal_form').on('input change', 'input, select, textarea', function () {
+            var name = $(this).attr('name');
+            if (!name) return;
+            var val = $(this).val();
+            if (val && !(typeof val === 'string' && val.trim() === '')) {
+                $('.field-validation[data-val-for="' + name + '"]').text('');
+            }
+        });
+        document.getElementById("step-1").checked = true;
+        $(".step-labels").find(".active").removeClass("active");
+        $(document.getElementById("step-1-label")).addClass("active");
+    });
+ 
+    function removeTickMark() {
+        $(".step-labels").find(".active").removeClass("active");
+        for (var i = 1; i <= 3; i++) {
+            var span = document.getElementById("step-"+i+"-label").querySelector(".tick");
+            if (span) {
+                if (span.classList.contains("active")) {
+                    span.classList.remove("active");
+                }
+                span.classList.remove("tick");
+                span.classList.add("checkmark");
+                span.innerHTML = "";
+            }
+        }
+    }
+
+    function validatePersonalForm() {
+        var isValid = true;
+        var fields = ['FirstName', 'LastName', 'DOB', 'SSN', 'PhoneNumber', 'EmailAddress'];
+        fields.forEach(function (name) {
+            var el = $('[name="' + name + '"]');
+            var val = el.val();
+            if (!val || (typeof val === 'string' && val.trim() === '')) {
+                $('.field-validation[data-val-for="' + name + '"]').text('This field cannot be empty.');
+                isValid = false;
+            } else if (name === 'EmailAddress') {
+                // simple email format check
+                var email = val.trim();
+                var re = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                if (!re.test(email)) {
+                    $('.field-validation[data-val-for="' + name + '"]').text('Please enter a valid email address.');
+                    isValid = false;
+                }
+            }
+        });
+        return isValid;
+    }
+</script>

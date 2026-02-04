@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Description = "Welcome to the Home Loan Application Demo! This web application demonstrates insurance claim process by integrating eSignatures using the BoldSign APIs.";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]—BoldSign API Demo</title>
+    <meta name="description" content="@ViewBag.Description" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/homeloandemo.styles.css" asp-append-version="true" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+    <script>
+        window.addEventListener('scroll', function () {
+            let header = document.querySelector('header');
+            let scrollPosition = window.scrollY;
+            if (scrollPosition > 0) {
+                header.classList.add('header-shadow');
+            } else {
+                header.classList.remove('header-shadow');
+            }
+        });
+        function toggleMenu() {
+            const mobileOptions = document.querySelector('.mobile-options');
+            mobileOptions.classList.toggle('active'); // Toggle visibility of the options
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="header-wrapper">
+            <div class="logo">
+                <a class="home-page-logo" href="/">
+                    <img alt="Cubeflakes Logo" src="/assets/images/Cubeflakes.png" />
+                </a>
+            </div>
+            <nav>
+                <ul class="desktop-options">
+                    <li><a href="https://github.com/boldsign/home-loan-application-demo">GitHub Source</a></li>
+                    <li><a href="/about/">About</a></li>
+                </ul>
+                <div class="mobile-menu">
+                        <img src="~/assets/images/menu.png" alt="Menu" onclick="toggleMenu()">
+                    <div class="mobile-options">
+                        <div class="option"><a href="https://github.com/boldsign/home-loan-application-demo">GitHub Source</a></div>
+                        <div class="option"><a href="/about/">About</a></div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <div class="hl-container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+   @*  <footer>
+        <div class="footer-wrapper">
+            <div class="logo-footer">
+                <a href="https://boldsign.com">
+                    <img alt="BoldSign Logo" src="/assets/images/boldsign-logo.svg" />
+                </a>
+            </div>
+            <div class="copy-right">
+                Copyright 2001–2023 Syncfusion Inc. All Rights Reserved
+            </div>
+        </div>
+    </footer> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

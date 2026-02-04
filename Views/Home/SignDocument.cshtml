@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model TemplateDetails
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Signing Process";
+}
+<script>
+    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    var eventer = window[eventMethod];
+    var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+
+    // Listen to message from child window
+    eventer(messageEvent, function (e) {
+        console.log('parent received message!:  ', e.data);
+        if (e.data.action === "onDocumentSigned") {
+            console.log("Completed ")
+            window.location.href = `/thank-you/?documentId=@Model.DocumentId`;
+        }
+    }, false);
+
+</script>
+
+<div class="content-wrapper loan-form">
+    <div class="loading-document review">
+        <div class="loan-review-header-wrapper">
+            <h1>Review and Sign the document</h1>
+                <p>Please review the document carefully and proceed with signing to submit your form.</p>
+        </div>
+        <iframe id="iframeID" src="@Model.SignLink"></iframe>
+    </div>
+
+</div>

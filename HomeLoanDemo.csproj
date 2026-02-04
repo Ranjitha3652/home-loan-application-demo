@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Title>Home Loan Application Demo</Title>
+    <Description>A comprehensive ASP.NET Core web application demonstrating a multi-step home loan application process with integrated electronic signatures using BoldSign API.</Description>
+    <Authors>BoldSign</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BoldSign.Api" Version="7.1.1" />
+  </ItemGroup>
+
+</Project>

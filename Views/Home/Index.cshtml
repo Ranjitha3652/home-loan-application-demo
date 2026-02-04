@@ -1,0 +1,102 @@
+﻿@model HomeLoanDemo.Models.TemplateDetails;
+@{
+    ViewBag.Title = "Loan Application Form";
+    ViewBag.Description = "Welcome to the Cubeflakes Loan Application Portal! This web application replicates the loan process with integrating eSignatures integrated using the BoldSign APIs.";
+}
+<div class="home-wrapper">
+    <div class="banner-wrapper">
+        <img src="~/assets/images/homeloan-banner.png" alt="Dream Home Background" style="width: 100%;">
+        <div class="overlay-text">
+            <div class="overlay-wrapper"><div class="title">Your Dream Home Awaits: Easy Loans, Simplified Process</div>
+            <div class="subtitle">Unlock the door to your new home with our seamless loan application. Fast approvals, competitive rates, and personalized service—experience home buying like never before.</div>
+            </div>
+        </div>
+    </div>
+    <div class="form-container-wrapper ">
+    <div class="form-container">
+            <div class="stepper-progressbar" id="stepper">
+                <div class="stepper-progressbar-value"></div>
+            </div>
+            <div class="step-labels">
+                    <label class="step step-title custom-radio active" id="step-1-label">
+                        <input type="radio" id="step-1" name="step" checked />
+                        <span class="checkmark"></span>
+                        Personal Information
+                    </label>             
+                <label class="step step-title custom-radio" id="step-2-label">
+                    <input type="radio" id="step-2" name="step"/>
+                    <span class="checkmark"></span>
+                    Employment Information
+                </label>
+                <label class="step step-title custom-radio" id="step-3-label">
+                    <input type="radio" id="step-3" name="step"/>
+                    <span class="checkmark"></span>
+                    Loan Information
+                </label>
+            </div>
+            <div class="info-container" id="info_container"> @await Html.PartialAsync("~/Views/Home/_PersonalInfo.cshtml", new TemplateDetails())</div>         
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+    (function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            const labels = Array.from(document.querySelectorAll('.step-labels .step'));
+            const progressFill = document.querySelector('.stepper-progressbar > .stepper-progressbar-value');
+            const total = labels.length || 1;
+
+            function setProgress(index) {
+                // index is 1-based
+                const steps = Math.max(total - 1, 1);
+                const percent = steps === 0 ? 0 : ((index - 1) / steps) * 100;
+                // update CSS variable (used by CSS fallback) and inline width (for immediate visual)
+                document.documentElement.style.setProperty('--progress-value', percent + '%');
+                if (progressFill) progressFill.style.width = percent + '%';
+                // toggle active class
+                labels.forEach((lbl, i) => {
+                    if (i === index - 1) {
+                        lbl.classList.add('active');
+                        const input = lbl.querySelector('input[type="radio"]');
+                        if (input) input.checked = true;
+                    } else {
+                        lbl.classList.remove('active');
+                        const input = lbl.querySelector('input[type="radio"]');
+                        if (input) input.checked = false;
+                    }
+                });
+            }
+
+            // initialize: find checked input or active label
+            let initialIndex = labels.findIndex(l => l.classList.contains('active')) + 1;
+            if (initialIndex === 0) {
+                const checked = document.querySelector('.step-labels input[type="radio"]:checked');
+                if (checked) {
+                    const parent = checked.closest('.step');
+                    initialIndex = labels.indexOf(parent) + 1;
+                }
+            }
+            if (initialIndex === 0) initialIndex = 1;
+            setProgress(initialIndex);
+
+            // click handlers for labels
+            labels.forEach((lbl, idx) => {
+                lbl.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    setProgress(idx + 1);
+                    // optional: load corresponding partial here if you want
+                });
+
+                // keyboard accessibility: Enter/Space
+                lbl.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setProgress(idx + 1);
+                    }
+                });
+                // make label focusable
+                lbl.setAttribute('tabindex', '0');
+            });
+        });
+    })();
+</script>
