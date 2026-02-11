@@ -19,36 +19,36 @@
             <div id="form-1" data-step="1">
                 <div class="row mb-3">
                     <div class="col-md-6 ">
-                        <label for="first-name" class="form-label">First name</label>
+                        <label for="first-name" class="form-label">First name <span class="required">*</span></label>
                             <input type="text" required class="form-control" id="first-name" placeholder="Enter your first name" asp-for="@Model.FirstName">
                             <span class="text-danger field-validation" data-val-for="FirstName"></span>
                     </div>
                     <div class="col-md-6">
-                        <label for="last-name" class="form-label">Last name</label>
+                        <label for="last-name" class="form-label">Last name <span class="required">*</span></label>
                         <input type="text" required class="form-control" id="last-name" placeholder="Enter your last name" asp-for="@Model.LastName">
                         <span class="text-danger field-validation" data-val-for="LastName"></span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="dob" class="form-label">Date of birth</label>
+                        <label for="dob" class="form-label">Date of birth <span class="required">*</span></label>
                         <input type="date" min="01/01/1900" required class="form-control" id="dob" asp-for="@Model.DOB" value="@(Model.DOB == DateTime.MinValue ? "" : Model.DOB.ToString("yyyy-MM-dd"))">
                         <span class="text-danger field-validation" data-val-for="DOB"></span>
                     </div>
                     <div class="col-md-6">
-                        <label for="ssn" class="form-label">Social security number</label>
+                        <label for="ssn" class="form-label">Social security number <span class="required">*</span></label>
                         <input type="number" required class="form-control" id="ssn" placeholder="Enter your social security number" asp-for="@Model.SSN">
                         <span class="text-danger field-validation" data-val-for="SSN"></span>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone number</label>
+                        <label for="phone" class="form-label">Phone number <span class="required">*</span></label>
                         <input type="number" required class="form-control" id="phone" placeholder="Enter your phone number" asp-for="@Model.PhoneNumber">
                         <span class="text-danger field-validation" data-val-for="PhoneNumber"></span>
                     </div>
                     <div class="col-md-6">
-                        <label for="email" class="form-label">Email address</label>
+                        <label for="email" class="form-label">Email address <span class="required">*</span></label>
                         <input type="email" required class="form-control" id="email" placeholder="Enter your email address" asp-for="@Model.EmailAddress">
                         <span class="text-danger field-validation" data-val-for="EmailAddress"></span>
                     </div>
@@ -127,6 +127,50 @@
                 if (!re.test(email)) {
                     $('.field-validation[data-val-for="' + name + '"]').text('Please enter a valid email address.');
                     isValid = false;
+                }
+            }
+            else if (name === 'SSN') {
+                var digits = (val + '').replace(/\D/g, '');
+                if (digits.length !== 9) {
+                    $('.field-validation[data-val-for="' + name + '"]').text('SSN must be exactly 9 digits.');
+                    isValid = false;
+                }
+            }
+            else if (name === 'PhoneNumber') {
+                var digits = (val + '').replace(/\D/g, '');
+                if (digits.length === 0) {
+                    $('.field-validation[data-val-for="' + name + '"]').text('Phone number is required.');
+                    isValid = false;
+                } else if (digits.length > 20) {
+                    $('.field-validation[data-val-for="' + name + '"]').text('Enter a valid phone number');
+                    isValid = false;
+                }
+            }
+            else if (name === 'DOB') {
+                var dobVal = new Date(val);
+                if (isNaN(dobVal.valueOf())) {
+                    $('.field-validation[data-val-for="' + name + '"]').text('Please enter a valid date.');
+                    isValid = false;
+                } else {
+                    var today = new Date();
+                    var minAge = 18;
+
+                    // Not allowed future
+                    if (dobVal > today) {
+                        $('.field-validation[data-val-for="' + name + '"]').text('Date of birth cannot be in the future.');
+                        isValid = false;
+                    }
+
+                    // Must be >= 18 years old (exact to the day)
+                    var age = today.getFullYear() - dobVal.getFullYear();
+                    var m = today.getMonth() - dobVal.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dobVal.getDate())) {
+                        age--;
+                    }
+                    if (age < minAge) {
+                         $('.field-validation[data-val-for="' + name + '"]').text('You must be at least ' + minAge + ' years old.');
+                        isValid = false;
+                    }
                 }
             }
         });

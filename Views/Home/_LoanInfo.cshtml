@@ -19,12 +19,12 @@
     <div id="form-3" data-step="3">
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="loanAmt" class="form-label">Loan Amount Requested</label>
+                <label for="loanAmt" class="form-label">Loan Amount Requested <span class="required">*</span></label>
                 <input type="number" class="form-control" placeholder="Enter your loan amount requested" asp-for="@Model.LoanAmount">
                 <span class="text-danger field-validation" data-val-for="LoanAmount"></span>
             </div>
             <div class="col-md-6">
-                <label for="loanPurpose" class="form-label">Purpose of Loan</label>
+                <label for="loanPurpose" class="form-label">Purpose of Loan <span class="required">*</span></label>
                 <select class="form-select" id="loanPurpose" required aria-label="Select purpose of loan" asp-for="@Model.SelectedPurpose" asp-items="@Model.LoanOptions">
                 <span class="text-danger field-validation" data-val-for="SelectedPurpose"></span>
                 </select>
@@ -32,12 +32,12 @@
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="address" class="form-label">Property Address</label>
+                <label for="address" class="form-label">Property Address <span class="required">*</span></label>
                 <input type="text" required min-length="4" class="form-control" placeholder="Enter your property address" asp-for="@Model.PropertyAddr">
                 <span class="text-danger field-validation" data-val-for="PropertyAddr"></span>
             </div>
             <div class="col-md-6">
-                <label for="annual-income" class="form-label">Estimated Property value</label>
+                <label for="annual-income" class="form-label">Estimated Property value <span class="required">*</span></label>
                 <input type="number" required class="form-control" placeholder="Enter your annual income" asp-for="@Model.EstimatedValue">
                 <span class="text-danger field-validation" data-val-for="EstimatedValue"></span>
             </div>
@@ -108,6 +108,18 @@
                 isValid = false;
             }
         });
+        
+        // Additional custom validation: Loan Amount < Property Value
+        var loanAmt = parseFloat($('[name="LoanAmount"]').val());
+        var propertyVal = parseFloat($('[name="EstimatedValue"]').val());
+
+        if (!isNaN(loanAmt) && !isNaN(propertyVal)) {
+            if (loanAmt >= propertyVal) {
+                $('.field-validation[data-val-for="LoanAmount"]').text('Loan amount must be less than the property value.');
+                isValid = false;
+            }
+        }
+
         return isValid;
     }
 </script>
