@@ -25,6 +25,8 @@ $(window).on("load", function (e){
                 // Update the text of the download button
                 document.getElementById('download-text').textContent = "Download"; 
                 document.getElementById('downloadBtn').classList.remove("change");
+                // Show the download icon 
+                document.getElementById('downloadIcon').style.display = "";
                 // Stop polling
                 clearTimeout(pollTimeoutId);
               } else {
@@ -49,7 +51,7 @@ $(window).on("load", function (e){
             <p>You can download the signed document for your records in the meantime.</p>
             </div>
             <div>
-        <a class="Submit-btn change" id="downloadBtn" asp-route-id="asp-route-id-value" asp-controller="Home" asp-action="DownloadDocument"><img src="~/assets/images/DownloadIcon.png" alt="download icon" class="icon"></img><span id="download-text">Download document</span></a>
+        <a class="Submit-btn change" id="downloadBtn" asp-route-id="asp-route-id-value" asp-controller="Home" asp-action="DownloadDocument"><img src="~/assets/images/DownloadIcon.png" alt="download icon" id="downloadIcon" class="icon" style="display:none; padding-right:12px;"></img><span id="download-text">Please wait ...</span></a>
     </div>
             <div><a id="homeBtn" href="/">Back to home</a></div>
            

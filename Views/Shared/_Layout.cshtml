@@ -9,7 +9,7 @@
     <title>@ViewData["Title"]—BoldSign API Demo</title>
     <meta name="description" content="@ViewBag.Description" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/assets/css/homeloandemo.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/assets/css/HomeLoanDemo.styles.css" asp-append-version="true" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
     <script>
@@ -26,6 +26,18 @@
             const mobileOptions = document.querySelector('.mobile-options');
             mobileOptions.classList.toggle('active'); // Toggle visibility of the options
         }
+        
+        // 👉 Close menu when clicking anywhere outside
+        document.addEventListener('click', function (e) {
+            const menu = document.querySelector('.mobile-options');
+            const menuIcon = document.querySelector('.mobile-menu img');
+
+            // If menu is open and click is outside both menu & icon → close it
+            if (!menu.contains(e.target) && e.target !== menuIcon) {
+                menu.classList.remove('active');
+            }
+        });
+
     </script>
 </head>
 <body>

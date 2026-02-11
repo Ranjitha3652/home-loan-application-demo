@@ -20,24 +20,24 @@
 <div id="form-2" data-step="2">
     <div class="row mb-3">
             <div class="col-md-6">
-                <label for="employer" class="form-label">Employer name</label>
+                <label for="employer" class="form-label">Employer name <span class="required">*</span></label>
                 <input type="text" class="form-control" placeholder="Enter your employer's name" asp-for="@Model.EmployerName">
                 <span class="text-danger field-validation" data-val-for="EmployerName"></span>
             </div>
         <div class="col-md-6">
-            <label for="job-title" class="form-label">Job title</label>
+            <label for="job-title" class="form-label">Job title <span class="required">*</span></label>
             <input type="text" class="form-control" id="job-title" placeholder="Enter your job title" asp-for="@Model.JobTitle">
             <span class="text-danger field-validation" data-val-for="JobTitle"></span>
         </div>     
     </div>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="years-at-job" class="form-label">Years at current job</label>
+                <label for="years-at-job" class="form-label">Years at current job <span class="required">*</span></label>
                 <input type="number" class="form-control" placeholder="Enter your years at current job" asp-for="@Model.Years">
                 <span class="text-danger field-validation" data-val-for="Years"></span>
             </div>
             <div class="col-md-6">
-                <label for="annual-income" class="form-label">Annual income</label>
+                <label for="annual-income" class="form-label">Annual income <span class="required">*</span></label>
                 <input type="number" required class="form-control" placeholder="Enter your annual income" asp-for="@Model.AnnualIncome">
                 <span class="text-danger field-validation" data-val-for="AnnualIncome"></span>
             </div>
@@ -125,6 +125,23 @@ $(document).ready(function () {
             if (!val || (typeof val === 'string' && val.trim() === '')) {
                 $('.field-validation[data-val-for="' + name + '"]').text('This field cannot be empty.');
                 isValid = false;
+            }
+
+            
+            // Field-specific checks
+            else if (name === 'Years') {
+                var digitsOnly = (val + '').trim();
+
+                if (!/^\d{1,2}$/.test(digitsOnly)) {
+                    $('.field-validation[data-val-for="Years"]').text('Please enter a valid number of years.');
+                    isValid = false;
+                } else {
+                    var num = parseInt(digitsOnly, 10);
+                    if (isNaN(num) || num < 0 || num > 60) {
+                        $('.field-validation[data-val-for="Years"]').text('Please enter a valid number of years between 0 and 60.');
+                        isValid = false;
+                    }
+                }
             }
         });
         return isValid;

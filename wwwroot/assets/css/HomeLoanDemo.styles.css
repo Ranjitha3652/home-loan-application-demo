@@ -119,6 +119,7 @@
     flex-direction: column;
     align-items: center;
     font-weight: var(--font-extra-bold);
+    pointer-events: none;
 }
 
 .step-labels .step.active {
@@ -996,7 +997,6 @@ input[type=number] {
         text-align: center;
         font-weight: var(--font-extra-bold);
         color: var(--content-color);
-        cursor: pointer;
         padding: 6px 8px 0 8px;
         min-width: 0;
     }
