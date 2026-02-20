@@ -340,7 +340,7 @@ button, .Submit-btn, .Submit-btn:hover {
     border-radius: var(--button-radius);
     border: var(--no-border);
     transition: var(--transition);
-    cursor: var(--clickable-cursor);
+    cursor: pointer;
     margin-top: 20px;
 }
 .nav-btns {
