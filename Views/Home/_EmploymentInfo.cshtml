@@ -66,7 +66,6 @@ $(document).ready(function () {
                 type: 'POST',
                 data: $(this).serialize(), // Serialize the form data
                 success: function (result) {
-                    debugger;
                     // Render the partial view result in the specified div
                     $('#info_container').html(result);
                 }
@@ -88,7 +87,6 @@ $(document).ready(function () {
                 type: 'POST',
                 data: $("#employment_form").serialize(), // Serialize the form data
                 success: function (result) {
-                    debugger;
                     // Render the partial view result in the specified div
                     $('#info_container').html(result);
                 }
@@ -102,7 +100,6 @@ $(document).ready(function () {
     function addTickMark() {
         var span = document.getElementById("step-1-label").querySelector(".checkmark");
         if (span) {
-            debugger;
             span.classList.remove("checkmark");
             span.classList.add("tick");
             span.innerHTML = "&#10003;";

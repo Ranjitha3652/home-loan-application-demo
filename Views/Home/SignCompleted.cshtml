@@ -34,7 +34,7 @@ $(window).on("load", function (e){
                 pollTimeoutId = setTimeout(pollStatus, pollIntervalMs);
               }
             })
-            .catch(error =>  {debugger; console.error(error)});
+            .catch(error =>  {console.error(error)});
         }
         
         // Start polling
